@@ -1,2 +1,2 @@
-# smy-discord-bot
+# my-discord-bot
 Simple Discord bot scaffold with register and index scripts
