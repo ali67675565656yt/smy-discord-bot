@@ -1,37 +1,38 @@
-require('dotenv').config();
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v10');
+import 'dotenv/config';
+import { REST, Routes, SlashCommandBuilder } from 'discord.js';
+
+const { DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
+
+if (!DISCORD_TOKEN || !CLIENT_ID || !GUILD_ID) {
+  throw new Error('تأكد من إعداد DISCORD_TOKEN وCLIENT_ID وGUILD_ID.');
+}
 
 const commands = [
-  {
-    name: 'ping',
-    description: 'Replies with Pong!'
-  }
+  new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('يعرض حالة استجابة البوت'),
+
+  new SlashCommandBuilder()
+    .setName('say')
+    .setDescription('يجعل البوت يرسل نصًا في القناة')
+    .addStringOption(option =>
+      option
+        .setName('text')
+        .setDescription('النص المراد إرساله')
+        .setRequired(true)
+        .setMaxLength(500)
+    )
 ];
 
-const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 
-(async () => {
-  try {
-    console.log('Started refreshing application (/) commands.');
+try {
+  await rest.put(
+    Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+    { body: commands.map(command => command.toJSON()) }
+  );
 
-    if (process.env.GUILD_ID) {
-      // Register to a single guild (fast for development)
-      await rest.put(
-        Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
-        { body: commands }
-      );
-      console.log('Successfully registered application commands for guild:', process.env.GUILD_ID);
-    } else {
-      // Register globally (can take up to an hour to propagate)
-      await rest.put(
-        Routes.applicationCommands(process.env.CLIENT_ID),
-        { body: commands }
-      );
-      console.log('Successfully registered application commands globally.');
-    }
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
-})();
+  console.log('تم تسجيل أوامر الخادم التجريبي.');
+} catch (error) {
+  console.error('فشل تسجيل الأوامر:', error);
+}
