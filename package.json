@@ -1,0 +1,19 @@
+{
+  "name": "smy-discord-bot",
+  "version": "0.1.0",
+  "description": "Simple Discord bot scaffold",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "register": "node register.js"
+  },
+  "engines": {
+    "node": ">=16.9.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.0.0",
+    "@discordjs/rest": "^1.4.0",
+    "discord-api-types": "^0.37.0",
+    "dotenv": "^16.0.0"
+  }
+}
